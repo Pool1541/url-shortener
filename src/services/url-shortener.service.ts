@@ -1,6 +1,6 @@
 import { CreateUrlShortenedResponse, UrlShortenerResponse, UrlsShortenerResponse } from '@/types/url-shortener.types';
 
-const BASE_URL = 'http://localhost:3000/api/urls';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function getOriginalUrl(shortUrl: string | undefined): Promise<UrlShortenerResponse> {
   if (!shortUrl) throw new Error('Short URL is required');
