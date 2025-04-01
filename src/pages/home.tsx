@@ -27,7 +27,7 @@ function Home() {
   }, [error, isError]);
 
   return (
-    <div className='flex flex-col items-center justify-center h-screen bg-slate-900'>
+    <div className='flex flex-col items-center justify-center min-h-screen bg-slate-900'>
       <div className='p-8 rounded-lg shadow-xl bg-slate-800 w-96 max-w-full'>
         <h1 className='text-3xl font-light mb-8 text-center text-indigo-300'>URL Shortener</h1>
         <form onSubmit={handleSubmit} className='space-y-6'>
