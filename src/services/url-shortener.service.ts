@@ -74,7 +74,7 @@ export async function getAllUrls(): Promise<UrlsShortenerResponse> {
 export async function deleteUrl(shortUrl: string | undefined): Promise<void> {
   if (!shortUrl) throw new Error('Short URL is required');
 
-  const response = await fetch(`${BASE_URL}/clicks/${shortUrl}`, {
+  const response = await fetch(`${BASE_URL}/${shortUrl}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
