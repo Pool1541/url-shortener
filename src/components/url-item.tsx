@@ -1,6 +1,8 @@
 import { SELF_DOMAIN } from '@/config';
+import useDeleteShortUrlMutation from '@/hooks/use-delete-short-url-mutation';
+import { showConfirmNotification } from '@/lib/notifications';
 import { UrlShortenerResponseWithShortUrl } from '@/types/url-shortener.types';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 interface UrlListProps {
   url: UrlShortenerResponseWithShortUrl;
@@ -9,12 +11,28 @@ interface UrlListProps {
 
 export default function UrlItem({ url, refetch }: UrlListProps) {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const itemRef = useRef<HTMLDivElement>(null);
+  const { mutate: deleteShortUrl, isPending: isDeleting } = useDeleteShortUrlMutation();
 
   const handleCopy = (shortUrl: string) => {
     const fullUrl = `${SELF_DOMAIN}/${shortUrl}`;
     navigator.clipboard.writeText(fullUrl);
     setCopiedUrl(shortUrl);
     setTimeout(() => setCopiedUrl(null), 2000);
+  };
+
+  const handleDelete = (shortUrl: string) => {
+    showConfirmNotification(
+      '¿Estás seguro de que quieres eliminar esta URL acortada?',
+      () => {
+        setIsRemoving(true);
+        // Esperar a que termine la animación antes de ejecutar la eliminación real
+        setTimeout(() => {
+          deleteShortUrl(shortUrl);
+        }, 500); // Este tiempo debe coincidir con la duración de la animación
+      }
+    );
   };
 
   function requestDataAgain() {
@@ -24,8 +42,9 @@ export default function UrlItem({ url, refetch }: UrlListProps) {
 
   return (
     <div
+      ref={itemRef}
       key={url.shortUrl}
-      className='mb-4 p-4 border border-slate-700 rounded-lg shadow-md bg-slate-800'>
+      className={`url-item ${isRemoving ? 'url-item-removing' : ''}`}>
       <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-2'>
         <div className='truncate max-w-xs'>
           <span className='text-slate-300'>{url.originalUrl}</span>
@@ -50,6 +69,12 @@ export default function UrlItem({ url, refetch }: UrlListProps) {
                 : 'bg-indigo-700 hover:bg-indigo-600 text-indigo-100'
             }`}>
             {copiedUrl === url.shortUrl ? 'Copied!' : 'Copy'}
+          </button>
+          <button
+            onClick={() => handleDelete(url.shortUrl)}
+            disabled={isDeleting || isRemoving}
+            className='px-3 py-1.5 rounded-md transition-all duration-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-slate-800 bg-red-700 hover:bg-red-600 text-red-100 disabled:opacity-50'>
+            {isDeleting ? 'Eliminando...' : 'Eliminar'}
           </button>
         </div>
       </div>
