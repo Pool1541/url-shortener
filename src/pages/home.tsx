@@ -1,10 +1,12 @@
 import UrlList from '@/components/url-list';
 import useCreateShortUrlMutation from '@/hooks/use-create-short-url-mutation';
 import { isValidUrl } from '@/lib/utils';
-import { useEffect } from 'react';
+import { useRef } from 'react';
 
 function Home() {
-  const { mutate, isPending, isError, error } = useCreateShortUrlMutation();
+  const formRef = useRef<HTMLFormElement>(null);
+  const { mutate, isPending } = useCreateShortUrlMutation();
+  
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -16,21 +18,19 @@ function Home() {
     }
 
     mutate(url, {
-      onSuccess: (data) => alert(`Short URL [${data.shortUrl}] created successfully!`),
+      onSuccess: () => {
+        if (formRef.current) {
+          formRef.current.reset();
+        }
+      },
     });
   }
-
-  useEffect(() => {
-    if (isError) {
-      alert(`Error: ${error?.message}`);
-    }
-  }, [error, isError]);
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen bg-slate-900'>
       <div className='p-8 rounded-lg shadow-xl bg-slate-800 w-96 max-w-full'>
         <h1 className='text-3xl font-light mb-8 text-center text-indigo-300'>URL Shortener</h1>
-        <form onSubmit={handleSubmit} className='space-y-6'>
+        <form ref={formRef} onSubmit={handleSubmit} className='space-y-6'>
           <div className='relative'>
             <input
               type='text'
