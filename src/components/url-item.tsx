@@ -1,5 +1,5 @@
 import { SELF_DOMAIN } from '@/config';
-import useDeleteShortUrlMutation from '@/hooks/use-delete-short-url-mutation';
+import { useDeleteShortUrlMutation } from '@/hooks';
 import { showConfirmNotification } from '@/lib/notifications';
 import { UrlShortenerResponseWithShortUrl } from '@/types/url-shortener.types';
 import { useState, useRef } from 'react';
