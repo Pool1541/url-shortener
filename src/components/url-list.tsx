@@ -5,7 +5,7 @@ export default function UrlList() {
   return (
     <UrlsContainer>
       {({ isError, isLoading, shortenedUrls, refetch }) => (
-        <div className='w-full max-w-4xl mt-8 px-4 max-h-[500px] overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-indigo'>
+        <div className='w-full max-w-4xl md:px-4 max-h-[500px] overflow-x-hidden overflow-y-auto scrollbar-thin scrollbar-indigo'>
           {isLoading && (
             <div className='p-6 rounded-lg shadow-md bg-slate-800 border border-slate-700 text-center animate-pulse'>
               <div className='inline-block mb-2'>
@@ -45,7 +45,7 @@ export default function UrlList() {
           )}
           
           {shortenedUrls && shortenedUrls.urls.length > 0 && shortenedUrls.urls.map((url) => (
-            <UrlItem key={url.shortUrl} url={url} refetch={refetch} />
+            <UrlItem key={url.shortUrl} url={url} />
           ))}
         </div>
       )}
