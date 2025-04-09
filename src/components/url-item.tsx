@@ -2,18 +2,19 @@ import { SELF_DOMAIN } from '@/config';
 import { useDeleteShortUrlMutation } from '@/hooks';
 import { showConfirmNotification } from '@/lib/notifications';
 import { UrlShortenerResponseWithShortUrl } from '@/types/url-shortener.types';
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 
 interface UrlListProps {
   url: UrlShortenerResponseWithShortUrl;
-  refetch: () => void;
 }
 
-export default function UrlItem({ url, refetch }: UrlListProps) {
+const UrlITem = React.memo(function ({ url }: UrlListProps) {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
   const itemRef = useRef<HTMLDivElement>(null);
   const { mutate: deleteShortUrl, isPending: isDeleting } = useDeleteShortUrlMutation();
+  
+  console.log(`Re-render on item: ${url.shortUrl}`);
 
   const handleCopy = (shortUrl: string) => {
     const fullUrl = `${SELF_DOMAIN}/${shortUrl}`;
@@ -27,18 +28,12 @@ export default function UrlItem({ url, refetch }: UrlListProps) {
       '¿Estás seguro de que quieres eliminar esta URL acortada?',
       () => {
         setIsRemoving(true);
-        // Esperar a que termine la animación antes de ejecutar la eliminación real
         setTimeout(() => {
           deleteShortUrl(shortUrl);
-        }, 500); // Este tiempo debe coincidir con la duración de la animación
+        }, 500);
       }
     );
   };
-
-  function requestDataAgain() {
-    console.log('refetching...')
-    refetch();
-  }
 
   return (
     <div
@@ -52,7 +47,6 @@ export default function UrlItem({ url, refetch }: UrlListProps) {
         <div className='flex flex-wrap items-center gap-2'>
           <a
             target='_blank'
-            onClick={() => setTimeout(() => requestDataAgain(), 4000)}
             href={`${SELF_DOMAIN}/${url.shortUrl}`}
             className='text-indigo-300 hover:text-indigo-200 font-medium truncate max-w-[200px]'>
             {`${SELF_DOMAIN}/${url.shortUrl}`}
@@ -80,4 +74,6 @@ export default function UrlItem({ url, refetch }: UrlListProps) {
       </div>
     </div>
   );
-}
+});
+
+export default UrlITem;
