@@ -1,4 +1,5 @@
-import { useShotenedUrl } from '@/hooks';
+import { TIME_BEFORE_REDIRECT } from '@/config';
+import { emitClickEvent, useShotenedUrl } from '@/hooks';
 import useShortenedUrlMutation from '@/hooks/use-shortened-url-mutation';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -13,10 +14,11 @@ export default function Redirect() {
       setTimeout(() => {
         registerClick.mutate(shortUrl, {
           onSuccess: () => {
+            emitClickEvent({  id: shortUrl! });
             window.location.href = shortenedUrl.originalUrl;
           }
         })
-      }, 2000);
+      }, TIME_BEFORE_REDIRECT);
     }
   }, [shortenedUrl, registerClick, shortUrl]);
 
