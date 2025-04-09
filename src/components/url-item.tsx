@@ -8,13 +8,11 @@ interface UrlListProps {
   url: UrlShortenerResponseWithShortUrl;
 }
 
-const UrlITem = React.memo(function ({ url }: UrlListProps) {
+const UrlItem = React.memo(function ({ url }: UrlListProps) {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
   const itemRef = useRef<HTMLDivElement>(null);
   const { mutate: deleteShortUrl, isPending: isDeleting } = useDeleteShortUrlMutation();
-  
-  console.log(`Re-render on item: ${url.shortUrl}`);
 
   const handleCopy = (shortUrl: string) => {
     const fullUrl = `${SELF_DOMAIN}/${shortUrl}`;
@@ -76,4 +74,4 @@ const UrlITem = React.memo(function ({ url }: UrlListProps) {
   );
 });
 
-export default UrlITem;
+export default UrlItem;
